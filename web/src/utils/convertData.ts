@@ -13,6 +13,7 @@ export const convertData = (data: DoorColumn) => {
   }
   return {
     ...data,
+    folder: data.folder ?? '',
     characters: data.characters || [''],
     groups: [...newGroupsData],
     items: data.items || [{ name: '', metadata: '', remove: false }],

@@ -17,6 +17,7 @@ debugData<DoorColumn[]>([
     data: [
       {
         name: 'Door name',
+        folder: 'police',
         passcode: 'Supersecret123',
         autolock: 300,
         id: 0,
@@ -50,6 +51,7 @@ debugData(
       data: {
         [0]: {
           name: 'New door',
+          folder: 'police',
           passcode: 'Supersecret123',
           autolock: 300,
           id: 2,

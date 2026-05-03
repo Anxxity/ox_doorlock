@@ -6,6 +6,8 @@ export type NumberField = number | null | undefined;
 export interface StoreState {
   id?: number;
   name: StringField;
+  /** UI list grouping label (e.g. police, hospital); optional */
+  folder: StringField;
   passcode: StringField;
   autolock: NumberField;
   items: { name: StringField; metadata?: StringField; remove: boolean | null }[];
@@ -30,6 +32,7 @@ interface StateSetters {
   setLockSound: (value: StoreState['lockSound']) => void;
   setUnlockSound: (value: StoreState['unlockSound']) => void;
   setName: (value: StoreState['name']) => void;
+  setFolder: (value: StoreState['folder']) => void;
   setPasscode: (value: StoreState['passcode']) => void;
   setAutolock: (value: StoreState['autolock']) => void;
   setItems: (fn: (state: StoreState['items']) => StoreState['items']) => void;
@@ -43,6 +46,7 @@ interface StateSetters {
 
 export const useStore = create<StoreState>(() => ({
   name: '',
+  folder: '',
   passcode: '',
   autolock: 0,
   items: [{ name: '', metadata: '', remove: false }],
@@ -69,6 +73,7 @@ export const useSetters = create<StateSetters>((set: SetState<StateSetters>, get
   setLockSound: (value) => useStore.setState({ lockSound: value }),
   setUnlockSound: (value) => useStore.setState({ unlockSound: value }),
   setName: (value) => useStore.setState({ name: value }),
+  setFolder: (value) => useStore.setState({ folder: value }),
   setPasscode: (value: StoreState['passcode']) => useStore.setState({ passcode: value }),
   setAutolock: (value: StoreState['autolock']) => useStore.setState({ autolock: value }),
   // @ts-ignore

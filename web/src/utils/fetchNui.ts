@@ -9,7 +9,14 @@
  * @return returnData - A promise for the data sent back by the NuiCallbacks CB argument
  */
 
+import { isEnvBrowser } from './misc';
+
 export async function fetchNui<T = any>(eventName: string, data?: any): Promise<T> {
+  if (isEnvBrowser()) {
+    console.log(`[fetchNui] ${eventName}`, data);
+    return undefined as T;
+  }
+
   const options = {
     method: 'post',
     headers: {
@@ -21,8 +28,11 @@ export async function fetchNui<T = any>(eventName: string, data?: any): Promise<
   const resourceName = (window as any).GetParentResourceName ? (window as any).GetParentResourceName() : 'nui-frame-app';
 
   const resp = await fetch(`https://${resourceName}/${eventName}`, options);
-
-  const respFormatted = await resp.json()
-
-  return respFormatted
+  const text = await resp.text();
+  if (!text) return undefined as T;
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    return text as unknown as T;
+  }
 }

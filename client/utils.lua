@@ -104,10 +104,8 @@ RegisterNUICallback('notify', function(data, cb)
 	lib.notify({ title = data })
 end)
 
-RegisterNUICallback('createDoor', function(data, cb)
-	cb(1)
-	SetNuiFocus(false, false)
-
+--- Normalise fields shared by create and inline save (does not touch coords / entities).
+local function normalizeDoorPayload(data)
 	data.state = (data.state == true or data.state == 1) and 1 or 0
 
 	if data.items and not next(data.items) then
@@ -125,6 +123,41 @@ RegisterNUICallback('createDoor', function(data, cb)
 	if data.groups and not next(data.groups) then
 		data.groups = nil
 	end
+end
+
+--- Prepare an existing door table for DB save (vector coords, strip runtime fields).
+local function prepareExistingDoorForSave(data)
+	if data.doors then
+		for i = 1, 2 do
+			local coords = data.doors[i].coords
+			data.doors[i].coords = vector3(coords.x, coords.y, coords.z)
+			data.doors[i].entity = nil
+		end
+	else
+		data.entity = nil
+	end
+
+	data.coords = vector3(data.coords.x, data.coords.y, data.coords.z)
+	data.distance = nil
+	data.zone = nil
+end
+
+--- Save an existing door from NUI without closing focus (folder moves, quick edits from list).
+RegisterNUICallback('saveDoor', function(data, cb)
+	cb(1)
+	if not data or not data.id then return end
+
+	normalizeDoorPayload(data)
+	prepareExistingDoorForSave(data)
+
+	TriggerServerEvent('ox_doorlock:editDoorlock', data.id, data)
+end)
+
+RegisterNUICallback('createDoor', function(data, cb)
+	cb(1)
+	SetNuiFocus(false, false)
+
+	normalizeDoorPayload(data)
 
 	if not data.id then
 		isAddingDoorlock = true
@@ -190,19 +223,7 @@ RegisterNUICallback('createDoor', function(data, cb)
 			data.heading = tempData[1].heading
 		end
 	else
-		if data.doors then
-			for i = 1, 2 do
-				local coords = data.doors[i].coords
-				data.doors[i].coords = vector3(coords.x, coords.y, coords.z)
-				data.doors[i].entity = nil
-			end
-		else
-			data.entity = nil
-		end
-
-		data.coords = vector3(data.coords.x, data.coords.y, data.coords.z)
-		data.distance = nil
-		data.zone = nil
+		prepareExistingDoorForSave(data)
 	end
 
 	isAddingDoorlock = false

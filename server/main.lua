@@ -46,7 +46,8 @@ local function encodeData(door)
         state = door.state,
         unlockSound = door.unlockSound,
         passcode = door.passcode,
-        lockpickDifficulty = door.lockpickDifficulty
+        lockpickDifficulty = door.lockpickDifficulty,
+        folder = door.folder
     })
 end
 

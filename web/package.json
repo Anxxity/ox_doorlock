@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "homepage": "web/build",
   "scripts": {
+    "dev": "vite",
     "start": "vite",
     "start:game": "vite build --watch",
     "build": "tsc && vite build",
